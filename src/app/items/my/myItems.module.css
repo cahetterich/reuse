@@ -1,0 +1,262 @@
+/* src/app/items/my/myItems.module.css */
+/* ====== Layout base (segue o padrão do Dashboard) ====== */
+.layout {
+  display: flex;
+  min-height: 100vh;
+  background: var(--reuse-light);
+}
+
+.main {
+  flex: 1;
+  padding: 32px;
+  margin-left: 220px; /* espaço para a UserNavbar fixa */
+}
+
+/* ====== Header ====== */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.addBtn {
+  background: var(--reuse-green);
+  border: none;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+.addBtn:hover {
+  background: var(--reuse-dark);
+}
+
+/* ====== Tabela (Desktop) ====== */
+.tableWrap {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #eee;
+  box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.05);
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+.table th,
+.table td {
+  padding: 12px;
+  border-bottom: 1px solid #f0f0f0;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.table th {
+  background: var(--reuse-light);
+  color: var(--reuse-dark);
+  font-weight: bold;
+}
+
+.thumb {
+  width: 80px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+/* ====== Status & badges ====== */
+.statusAvailable {
+  color: var(--reuse-green);
+  font-weight: bold;
+}
+
+.statusTraded {
+  color: var(--reuse-accent);
+  font-weight: bold;
+}
+
+.badge {
+  display: inline-block;
+  background: #eef3ee;
+  color: var(--reuse-dark);
+  border: 1px solid #e0e8e0;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+}
+
+/* ====== Preço ====== */
+.price {
+  font-weight: bold;
+  color: var(--reuse-dark);
+}
+
+/* ====== Switch (ativo/inativo) ====== */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 22px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: #ccc;
+  transition: 0.2s;
+  border-radius: 22px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.2s;
+}
+
+input:checked + .slider {
+  background-color: var(--reuse-green);
+}
+
+input:checked + .slider:before {
+  transform: translateX(18px);
+}
+
+/* ====== Botões ====== */
+.editBtn,
+.deleteBtn {
+  border: none;
+  padding: 6px 10px;
+  margin-right: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+}
+
+.editBtn {
+  background: var(--reuse-green);
+  color: white;
+}
+
+.editBtn:hover {
+  background: var(--reuse-dark);
+}
+
+.deleteBtn {
+  background: #e23636;
+  color: white;
+}
+
+.deleteBtn:hover {
+  background: #c72c2c;
+}
+
+/* ====== Visibilidade desktop/mobile ====== */
+.desktopOnly { display: block; }
+.mobileOnly { display: none; }
+
+/* ====== Cards (Mobile) ====== */
+.mobileList {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.mobileCard {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #eee;
+  box-shadow: 0px 3px 8px rgba(0,0,0,0.05);
+  overflow: hidden;
+}
+
+.mobileHeader {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+}
+
+.mobileThumb {
+  width: 96px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.mobileInfo {
+  flex: 1;
+}
+
+.mobileTitleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 8px;
+}
+
+.mobileTitle {
+  font-weight: bold;
+  color: var(--reuse-dark);
+}
+
+.mobileStatus {
+  font-size: 0.85rem;
+}
+
+.mobileMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.mobileDesc {
+  padding: 0 12px 12px 12px;
+  color: var(--reuse-text);
+  font-size: 0.95rem;
+}
+
+.mobileActions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  border-top: 1px solid #f0f0f0;
+}
+
+/* ====== Responsividade ====== */
+@media (max-width: 768px) {
+  .main {
+    margin-left: 0;
+    padding: 16px;
+    margin-top: 60px; /* espaço para o hamburger do UserNavbar no topo */
+  }
+
+  .desktopOnly { display: none; }
+  .mobileOnly { display: block; }
+
+  .thumb { width: 60px; height: 45px; }
+}

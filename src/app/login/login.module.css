@@ -1,0 +1,97 @@
+/* src/app/login/login.module.css */
+.container {
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.card {
+  background: white;
+  padding: 32px;
+  border-radius: 12px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+}
+
+.title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: var(--reuse-dark);
+}
+
+.subtitle {
+  margin-top: 8px;
+  color: var(--reuse-text);
+  font-size: 0.95rem;
+}
+
+.form {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.inputGroup {
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+}
+
+.inputGroup label {
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+  color: var(--reuse-dark);
+}
+
+.inputGroup input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.primaryBtn {
+  background-color: var(--reuse-green);
+  color: white;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.primaryBtn:hover {
+  background-color: var(--reuse-dark);
+}
+
+.registerText {
+  margin-top: 16px;
+  font-size: 0.9rem;
+  color: var(--reuse-text);
+}
+
+.link {
+  color: var(--reuse-green);
+  font-weight: 500;
+}
+
+.message {
+  margin-top: 12px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--reuse-dark);
+}
+
+/* Mensagens de erro em vermelho */
+.error {
+  color: red;
+  font-size: 0.9rem;
+  margin-top: -8px;
+  margin-bottom: 8px;
+}

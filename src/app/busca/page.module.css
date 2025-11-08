@@ -1,0 +1,194 @@
+/* Shell com sidebar fixa do UserNavbar (220px) */
+.shell {
+  display: flex;
+  min-height: 100vh;
+  background: var(--reuse-light);
+  color: var(--reuse-text);
+}
+
+.main {
+  flex: 1;
+  padding: 32px;
+  padding-top: calc(32px + env(safe-area-inset-top));
+  margin-left: 220px;
+}
+
+/* Cabeçalho */
+.wrap { max-width: 1200px; margin: 0 auto; }
+
+/* Filtros: grid 4 colunas responsivo, espaçamento 16/24 (8-pt grid) */
+.filters {
+  display: grid;
+  grid-template-columns: 1fr 180px 180px auto;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.input, .select {
+  border: 1px solid #D1D1D1; /* 3:1+ para UI elements */
+  background: #fff;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 14px;
+}
+.onlyActive {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  user-select: none;
+}
+.onlyActive input { transform: translateY(1px); }
+
+/* Grid de cards: colunas fluidas com min 320px */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+/* Card profissional: hover eleva + sombra suave; 8-pt em tudo */
+.card {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0,0,0,.05);
+  transition: box-shadow .18s ease, transform .18s ease, border-color .18s ease;
+}
+.card:hover {
+  box-shadow: 0 6px 18px rgba(0,0,0,.12); /* elevação ao passar o mouse */
+  transform: translateY(-1px);
+  border-color: #e8e8e8;
+}
+
+/* Mídia com “pill” Salvar posicionado */
+.mediaWrap { position: relative; background: #f2f4f3; }
+.media {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  display: block;
+}
+.pill {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  background: #ffffffea;
+  color: var(--reuse-dark);
+  border: 1px solid #dcdcdc;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.pillOn {
+  background: var(--reuse-green);
+  color: #fff;            /* contraste AA com o verde do projeto */
+  border-color: var(--reuse-green);
+}
+
+/* Corpo do card */
+.body { padding: 12px 12px 0 12px; }
+.rowTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.cardTitle { font-size: 18px; font-weight: 800; color: var(--reuse-dark); }
+.desc {
+  margin-top: 6px;
+  font-size: 14px;
+  color: var(--reuse-text);
+  min-height: 40px;
+}
+.rowMeta {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.price { color: var(--reuse-dark); font-weight: 800; }
+
+/* Badges & chips */
+.badge {
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 12px;
+  border: 1px solid #e6e6e6;
+  background: #fff;
+}
+.badgeOk { color: var(--reuse-green); border-color: #cfe5d9; background: #f5fbf7; }
+.badgeWarn { color: var(--reuse-accent); border-color: #f1d6c6; background: #fff8f4; }
+.chip {
+  background: #eef3ee;
+  color: var(--reuse-dark);
+  border: 1px solid #e0e8e0;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Ações: botões com contraste adequado */
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  padding: 12px;
+  border-top: 1px solid #f0f0f0;
+}
+.btnPrimary {
+  background: var(--reuse-green);
+  color: #fff;
+  border: 1px solid var(--reuse-green);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.btnPrimary:hover { background: #4f7a5e; }
+.btnGhost {
+  background: #fff;
+  color: var(--reuse-dark);
+  border: 1px solid #D1D1D1;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.btnGhost:hover { background: #fafafa; }
+
+.empty { margin-top: 24px; color: var(--reuse-text); }
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .main {
+    margin-left: 0;
+    padding: 16px;
+    padding-top: calc(16px + env(safe-area-inset-top));
+   }
+  .filters { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .media { height: 200px; }
+  .actions { grid-template-columns: 1fr; }
+}
+
+/* Responsividade refinada */
+@media (max-width: 1024px) {
+  .filters {
+    grid-template-columns: 1fr 1fr 1fr auto; /* tablets */
+  }
+}
+
+
+
+@media (max-width: 480px) {
+  .filters {
+    grid-template-columns: 1fr;    /* tudo em uma coluna nos celulares pequenos */
+  }
+  .media { height: 180px; }
+}

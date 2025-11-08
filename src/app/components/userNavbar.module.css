@@ -1,0 +1,121 @@
+/* src/app/components/userNavbar.module.css */
+
+/* desktop */
+.sidebar {
+  width: 220px;
+  background: var(--reuse-dark);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* topo e rodapé */
+  padding: 24px;
+  min-height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+}
+
+/* nova seção que agrupa logo + nav */
+.topSection {
+  display: flex;
+  flex-direction: column;
+}
+
+.logo {
+  font-size: 1.4rem;
+  font-weight: bold;
+  margin-bottom: 32px;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.navLink {
+  color: #fff;
+  text-decoration: none;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.navLink:hover {
+  opacity: 0.85;
+}
+
+/* Botão de logout fixado no rodapé da sidebar */
+.logoutBtn {
+  background: var(--reuse-green);
+  border: none;
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s, color 0.2s, transform 0.1s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.logoutBtn:hover {
+  background: transparent;
+  border: 1px solid var(--reuse-green);
+  color: var(--reuse-green);
+  transform: scale(1.05);
+}
+
+
+
+/* Botão do menu (mobile) */
+.menuBtn {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin: 12px;
+  color: var(--reuse-dark);
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 1100;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .menuBtn {
+    display: block;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -220px;      /* escondida por padrão */
+    height: 100%;
+    transition: left 0.3s ease;
+  }
+
+  .sidebar.open {
+    left: 0;           /* desliza quando abre */
+  }
+}
+
+.cartBtn {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,.25);
+  color: #fff;
+  padding: 8px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: inline-flex; align-items: center; gap: 8px;
+  position: relative;
+}
+.badge {
+  position: absolute; top: -8px; right: -8px;
+  background: #E23636; color: #fff;
+  font-size: 12px; font-weight: 700; line-height: 1;
+  padding: 4px 6px; border-radius: 999px;
+}

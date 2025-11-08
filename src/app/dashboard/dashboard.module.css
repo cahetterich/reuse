@@ -1,0 +1,352 @@
+/* src/app/dashboard/dashboard.module.css */
+
+.container {
+  margin-top: 40px;
+  min-height: 100vh;
+  background: var(--reuse-light);
+  color: var(--reuse-text);
+}
+
+/* Sidebar */
+.sidebar {
+  width: 220px;
+  background: var(--reuse-dark);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+}
+
+.logo {
+  font-size: 1.4rem;
+  font-weight: bold;
+  margin-bottom: 32px;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.navLink {
+  color: #fff;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: opacity 0.2s;
+}
+
+.navLink:hover {
+  opacity: 0.8;
+}
+
+.dashboardWrapper {
+  display: flex;
+  background: var(--reuse-light);
+  color: var(--reuse-text);
+  min-height: 100vh;
+}
+
+/* Área principal */
+.main {
+  flex: 1;
+  padding: 32px;
+  margin-left: 220px; /* deixa espaço para sidebar fixa */
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.logoutBtn {
+  background: var(--reuse-green);
+  border: none;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+.logoutBtn:hover {
+  background: var(--reuse-dark);
+}
+
+/* Cards de resumo */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0px 3px 8px rgba(0,0,0,0.05);
+  text-align: center;
+}
+
+.card h3 {
+  color: var(--reuse-dark);
+  margin-bottom: 8px;
+}
+
+.cardNumber {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: var(--reuse-green);
+}
+
+/* Lista */
+.list {
+  background: #fff;
+  padding: 24px;
+  border-radius: 12px;
+  border: 1px solid #eee;
+  box-shadow: 0px 3px 8px rgba(0,0,0,0.05);
+}
+
+.list h2 {
+  margin-bottom: 16px;
+  color: var(--reuse-dark);
+}
+
+.listItem {
+  padding: 10px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.listItem:last-child {
+  border-bottom: none;
+}
+
+.tableSection {
+  background: #fff;
+  padding: 24px;
+  border-radius: 12px;
+  border: 1px solid #eee;
+  box-shadow: 0px 3px 8px rgba(0,0,0,0.05);
+  margin-top: 20px;
+}
+
+.tableSection h2 {
+  margin-bottom: 16px;
+  color: var(--reuse-dark);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.table th {
+  color: var(--reuse-dark);
+  font-weight: bold;
+  background: var(--reuse-light);
+}
+
+.statusAvailable {
+  color: var(--reuse-green);
+  font-weight: bold;
+}
+
+.statusTraded {
+  color: var(--reuse-accent);
+  font-weight: bold;
+}
+
+.itemsSection {
+  background: #fff;
+  padding: 24px;
+  border-radius: 12px;
+  border: 1px solid #eee;
+  box-shadow: 0 3px 8px rgba(0,0,0,.05);
+  margin-top: 20px;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.addBtn {
+  background-color: var(--reuse-green);
+  color: #fff;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.addBtn:hover { background-color: var(--reuse-dark); }
+
+.itemsGrid {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.itemCard {
+  display: flex;
+  gap: 12px;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 12px;
+  background: #fff;
+}
+
+.itemImage {
+  width: 110px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 8px;
+  background: #f1f1f1;
+}
+
+.itemContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.itemHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.itemDescription {
+  margin-top: 6px;
+  color: var(--reuse-text);
+  font-size: .95rem;
+}
+
+.metaRow {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.badge {
+  background: var(--reuse-light);
+  color: var(--reuse-dark);
+  border: 1px solid #e5e5e5;
+  padding: 4px 8px;
+  border-radius: 9999px;
+  font-size: .85rem;
+}
+
+.price {
+  font-weight: 700;
+  color: var(--reuse-dark);
+}
+
+.actions {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+
+.editBtn, .deleteBtn {
+  border: none;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.editBtn { background: #eef6ff; color: #0d47a1; border: 1px solid #d8e7ff; }
+.editBtn:hover { background: #e2efff; }
+.deleteBtn { background: #fff1f1; color: #9c1c1c; border: 1px solid #ffd6d6; }
+.deleteBtn:hover { background: #ffe9e9; }
+
+/* Toggle switch */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+.switch input { display: none; }
+.slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background: #ddd;
+  transition: .2s;
+  border-radius: 9999px;
+}
+.slider:before {
+  content: "";
+  position: absolute;
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  top: 3px;
+  background: #fff;
+  transition: .2s;
+  border-radius: 50%;
+}
+.switch input:checked + .slider { background: var(--reuse-green); }
+.switch input:checked + .slider:before { transform: translateX(20px); }
+
+/* status badge (reaproveita suas classes existentes) */
+.statusAvailable { color: var(--reuse-green); font-weight: bold; }
+.statusTraded { color: var(--reuse-accent); font-weight: bold; }
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-around;
+    padding: 12px;
+  }
+
+  .nav {
+    flex-direction: row;
+    gap: 12px;
+  }
+
+.main {
+    margin-left: 0;
+    padding: 16px;
+  }
+
+  .table th,
+  .table td {
+    font-size: 0.85rem;
+    padding: 8px;
+  }
+
+   .itemCard { flex-direction: column; }
+  .itemImage { width: 100%; height: 160px; }
+}
