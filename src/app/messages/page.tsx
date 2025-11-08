@@ -1,104 +1,156 @@
+// src/app/messages/page.tsx
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import UserNavbar from "../components/UserNavbar";
+import styles from "./messages.module.css";
 
-type Message = { id: string; from: string; to: string; text: string; ts: number };
-type Thread = { peer: string; last: number };
-
-const seedIfEmpty = () => {
-  const raw = localStorage.getItem("reuse_messages");
-  if (!raw) {
-    const now = Date.now();
-    const demo: Message[] = [
-      { id: "1", from: "maria@reuse.com", to: "me", text: "Oi! A câmera ainda está disponível?", ts: now - 1000 * 60 * 60 },
-      { id: "2", from: "me", to: "maria@reuse.com", text: "Está sim! Posso reservar pra você.", ts: now - 1000 * 60 * 30 },
-    ];
-    localStorage.setItem("reuse_messages", JSON.stringify(demo));
-  }
+// Modelo mínimo alinhado ao backend atual
+type Message = {
+  id: number;
+  fromUser: { id: number; name: string };
+  toUser: { id: number; name: string };
+  subject: string;
+  preview: string;
+  unread: boolean;
+  updatedAt: string; // ISO
 };
 
+type Box = "inbox" | "sent" | "archived";
+
 export default function MessagesPage() {
-  const [me, setMe] = useState<string>("me");
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [peer, setPeer] = useState<string>("maria@reuse.com");
-  const [draft, setDraft] = useState("");
+  const [box, setBox] = useState<Box>("inbox");
+  const [items, setItems] = useState<Message[]>([]);
+  const [q, setQ] = useState("");
 
+  // carrega mensagens da caixa atual
   useEffect(() => {
-    seedIfEmpty();
-    const raw = localStorage.getItem("reuse_messages");
-    setMessages(raw ? JSON.parse(raw) : []);
-    const u = localStorage.getItem("user");
-    if (u) {
-      try { setMe(JSON.parse(u).email || "me"); } catch {}
-    }
-  }, []);
+    // mantemos a rota simples; adapte quando o endpoint real existir
+    fetch(`/api/messages?box=${box}`, { cache: "no-store" })
+      .then(r => (r.ok ? r.json() : []))
+      .then((data: Message[]) => setItems(data ?? []))
+      .catch(() => setItems([]));
+  }, [box]);
 
-  const threads = useMemo<Thread[]>(() => {
-    const map = new Map<string, number>();
-    for (const m of messages) {
-      const other = m.from === me ? m.to : m.from;
-      map.set(other, Math.max(map.get(other) || 0, m.ts));
-    }
-    return [...map.entries()].map(([peer, last]) => ({ peer, last })).sort((a,b) => b.last - a.last);
-  }, [messages, me]);
-
-  const threadMsgs = messages.filter(m => m.from === peer || m.to === peer).sort((a,b) => a.ts - b.ts);
-
-  const send = () => {
-    const text = draft.trim();
-    if (!text) return;
-    const msg: Message = { id: crypto.randomUUID(), from: me, to: peer, text, ts: Date.now() };
-    const next = [...messages, msg];
-    setMessages(next);
-    localStorage.setItem("reuse_messages", JSON.stringify(next));
-    setDraft("");
-  };
+  // filtro client-side por assunto/remetente
+  const filtered = useMemo(() => {
+    if (!q.trim()) return items;
+    const term = q.toLowerCase();
+    return items.filter(
+      m =>
+        m.subject.toLowerCase().includes(term) ||
+        m.preview.toLowerCase().includes(term) ||
+        m.fromUser.name.toLowerCase().includes(term)
+    );
+  }, [items, q]);
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "280px 1fr", minHeight: "70vh" }}>
-      <aside style={{ borderRight: "1px solid #eee", background: "#fff" }}>
-        <div style={{ padding: 12, borderBottom: "1px solid #eee", fontWeight: 700 }}>Conversas</div>
-        <div>
-          {threads.map(t => (
-            <button
-              key={t.peer}
-              onClick={() => setPeer(t.peer)}
-              style={{
-                width: "100%", textAlign: "left", padding: 12, border: "none",
-                background: peer === t.peer ? "#eef6ff" : "transparent", cursor: "pointer"
-              }}
-            >
-              {t.peer}
-            </button>
-          ))}
-        </div>
-      </aside>
+    <div className={styles.shell}>
+      <UserNavbar />
 
-      <section style={{ display: "flex", flexDirection: "column" }}>
-        <div style={{ padding: 12, borderBottom: "1px solid #eee", background: "#fff" }}>
-          <strong>Chat com {peer}</strong>
-        </div>
-        <div style={{ flex: 1, padding: 16, display: "grid", gap: 8, background: "var(--reuse-light)" }}>
-          {threadMsgs.map(m => (
-            <div key={m.id} style={{
-              justifySelf: m.from === me ? "end" : "start",
-              background: m.from === me ? "var(--reuse-green)" : "#fff",
-              color: m.from === me ? "#fff" : "inherit",
-              padding: "8px 12px", borderRadius: 12, maxWidth: 520
-            }}>
-              {m.text}
+      <main className={styles.main}>
+        <div className="container">
+          <h1 className="pageTitle">Mensagens</h1>
+
+          {/* Ações de topo / filtros */}
+          <div className={styles.toolbar} role="region" aria-label="Ações e filtros de mensagens">
+            <div className={styles.tabs} role="tablist" aria-label="Caixas de mensagem">
+              {(["inbox", "sent", "archived"] as Box[]).map(t => (
+                <button
+                  key={t}
+                  role="tab"
+                  aria-selected={box === t}
+                  className={`${styles.tab} ${box === t ? styles.tabActive : ""}`}
+                  onClick={() => setBox(t)}
+                >
+                  {t === "inbox" ? "Caixa de entrada" : t === "sent" ? "Enviadas" : "Arquivadas"}
+                </button>
+              ))}
             </div>
-          ))}
+
+            <div className={styles.rightActions}>
+              <input
+                className={styles.search}
+                placeholder="Buscar por assunto ou remetente…"
+                aria-label="Buscar mensagens"
+                value={q}
+                onChange={e => setQ(e.target.value)}
+              />
+              {/* “Nova conversa” aponta para uma rota futura */}
+              <Link href="/messages/new" className={styles.primaryBtn}>
+                Nova conversa
+              </Link>
+            </div>
+          </div>
+
+          {/* Lista de threads */}
+          {filtered.length > 0 ? (
+            <ul className={styles.list} role="list" aria-live="polite">
+              {filtered.map(msg => (
+                <li
+                  key={msg.id}
+                  role="listitem"
+                  className={`${styles.item} ${msg.unread ? styles.unread : ""}`}
+                >
+                  <div className={styles.itemMain}>
+                    <div className={styles.avatar} aria-hidden="true">
+                      {msg.fromUser.name.charAt(0).toUpperCase()}
+                    </div>
+
+                    <div className={styles.meta}>
+                      <div className={styles.rowTop}>
+                        <strong className={styles.from}>
+                          {msg.fromUser.name}
+                        </strong>
+                        <time className={styles.time} dateTime={msg.updatedAt}>
+                          {new Date(msg.updatedAt).toLocaleString("pt-BR")}
+                        </time>
+                      </div>
+
+                      <div className={styles.subject} title={msg.subject}>
+                        {msg.subject}
+                      </div>
+                      <div className={styles.preview} title={msg.preview}>
+                        {msg.preview}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className={styles.actions} aria-label="Ações da conversa">
+                    <Link href={`/messages/${msg.id}`} className={styles.ghostBtn}>
+                      Abrir
+                    </Link>
+                    <button className={styles.ghostBtn} onClick={() => {/* arquivar (futuro) */}}>
+                      Arquivar
+                    </button>
+                    {msg.unread && (
+                      <button className={styles.ghostBtn} onClick={() => {/* marcar lida (futuro) */}}>
+                        Marcar como lida
+                      </button>
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            // Empty state claro, com call to action; segue boas práticas
+            <div className={styles.empty} role="status" aria-live="polite">
+              <img
+                src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f4e8.svg"
+                alt=""
+                aria-hidden="true"
+                className={styles.emptyIcon}
+              />
+              <h2>Sem mensagens por aqui</h2>
+              <p>Quando alguém entrar em contato sobre seus itens, a conversa aparece aqui.</p>
+              <Link href="/busca" className={styles.primaryBtn}>
+                Explorar itens
+              </Link>
+            </div>
+          )}
         </div>
-        <div style={{ padding: 12, display: "flex", gap: 8, background: "#fff", borderTop: "1px solid #eee" }}>
-          <input
-            value={draft} onChange={e => setDraft(e.target.value)}
-            placeholder="Escreva uma mensagem"
-            style={{ flex: 1, padding: 10, border: "1px solid #ccc", borderRadius: 8 }}
-          />
-          <button onClick={send} className="btn-primary">Enviar</button>
-        </div>
-      </section>
+      </main>
     </div>
   );
 }

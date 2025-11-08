@@ -113,9 +113,21 @@
   display: inline-flex; align-items: center; gap: 8px;
   position: relative;
 }
-.badge {
-  position: absolute; top: -8px; right: -8px;
-  background: #E23636; color: #fff;
-  font-size: 12px; font-weight: 700; line-height: 1;
-  padding: 4px 6px; border-radius: 999px;
+
+/* badge do carrinho */
+.cartLink {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
+
+.badge {
+  background: var(--reuse-green);
+  color: #fff;
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: 700;
+  margin-left: auto;
+}
+

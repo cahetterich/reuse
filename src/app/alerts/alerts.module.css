@@ -1,0 +1,162 @@
+/* Layout base: segue o padrão do dashboard + UserNavbar fixo */
+.shell {
+  display: flex;
+  min-height: 100vh;
+  background: var(--reuse-light);
+  color: var(--reuse-text);
+}
+
+.main {
+  flex: 1;
+  padding: 32px;
+  margin-left: 220px; /* espaço da sidebar do usuário */
+}
+
+/* Topo */
+.header { margin-bottom: 12px; }
+
+/* Loading */
+.loading {
+  padding: 16px;
+  color: var(--reuse-dark);
+}
+
+/* ===== Empty state profissional ===== */
+.empty {
+  display: grid;
+  gap: 12px;
+  justify-items: start;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 3px 8px rgba(0,0,0,.05);
+}
+.emptyIcon {
+  font-size: 32px;
+  line-height: 1;
+}
+.empty h2 {
+  font-weight: 800;
+  color: var(--reuse-dark);
+}
+.empty p {
+  color: var(--reuse-text);
+}
+.emptyActions {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+/* ===== Lista de cards ===== */
+.list {
+  display: grid;
+  gap: 12px;
+}
+
+.card {
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  gap: 12px;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 3px 8px rgba(0,0,0,.04);
+  transition: box-shadow .18s ease, border-color .18s ease, transform .18s ease;
+}
+.card:hover {
+  box-shadow: 0 6px 18px rgba(0,0,0,.10);
+  border-color: #e8e8e8;
+  transform: translateY(-1px);
+}
+.cardRead {
+  opacity: .85;
+}
+
+.icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: #f2f4f3;
+  font-size: 20px;
+}
+
+.content { display: grid; gap: 8px; }
+.rowTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.title { font-weight: 800; color: var(--reuse-dark); }
+.desc { color: var(--reuse-text); }
+.metaRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #6b6b6b;
+  font-size: 0.95rem;
+}
+.dotNew {
+  width: 8px;
+  height: 8px;
+  background: var(--reuse-green);
+  border-radius: 999px;
+}
+
+/* Badges */
+.badge {
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 12px;
+  border: 1px solid #e6e6e6;
+  background: #fff;
+  font-weight: 700;
+}
+.badgeOk { color: var(--reuse-green); border-color: #cfe5d9; background: #f5fbf7; }
+.badgeWarn { color: var(--reuse-accent); border-color: #f1d6c6; background: #fff8f4; }
+.badgeError { color: #b42318; border-color: #ffd7d7; background: #fff1f1; }
+
+/* Ações */
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+.btnPrimary {
+  background: var(--reuse-green);
+  color: #fff;
+  border: 1px solid var(--reuse-green);
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.btnPrimary:hover { background: #4f7a5e; }
+.btnGhost {
+  background: #fff;
+  color: var(--reuse-dark);
+  border: 1px solid #D1D1D1;
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.btnGhost:hover { background: #fafafa; }
+
+/* ===== Responsivo ===== */
+@media (max-width: 768px) {
+  .main {
+    margin-left: 0;
+    padding: 16px;
+    margin-top: 60px; /* espaço pro hambúrguer do UserNavbar */
+  }
+  .card {
+    grid-template-columns: 40px 1fr;
+    padding: 14px;
+  }
+}

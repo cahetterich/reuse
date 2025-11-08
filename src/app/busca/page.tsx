@@ -1,11 +1,10 @@
 // src/app/busca/page.tsx
-
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
 import styles from "./page.module.css";
-import Modal from "@/app/components/Modal";
-import { useCart } from "@/app/components/cart/CartContext";
+import Modal from "../components/Modal";        // <= ajuste o caminho se seu Modal estiver em outro lugar
+import { addToCart } from "../../lib/cart";        // <= util do carrinho
 
 type Item = {
   id: number;
@@ -14,7 +13,7 @@ type Item = {
   category: string;
   price: number | null;
   imageUrl: string | null;
-  status: string;       // "disponível" | "reservado" | "trocado" | "indisponível"
+  status: string;
   isActive: boolean;
   userId: number;
   user?: { name: string };
@@ -23,7 +22,7 @@ type Item = {
 const CATEGORIES = ["Todos", "Eletrônicos", "Roupas", "Livros", "Móveis", "Outros"] as const;
 type CategoryFilter = typeof CATEGORIES[number];
 type SortKey = "recentes" | "precoAsc" | "precoDesc" | "titulo";
-type Action = "buy" | "trade" | "message" | null;
+type ActionType = "comprar" | "trocar" | "mensagem" | null;
 
 export default function BuscarItensPage() {
   const [items, setItems] = useState<Item[]>([]);
@@ -34,21 +33,16 @@ export default function BuscarItensPage() {
   const [favorites, setFavorites] = useState<number[]>([]);
   const [me, setMe] = useState<{ id: number; name: string; email: string } | null>(null);
 
-  // modal
-  const [modalOpen, setModalOpen] = useState(false);
-  const [action, setAction] = useState<Action>(null);
-  const [currentItem, setCurrentItem] = useState<Item | null>(null);
+  // modal state
+  const [openModal, setOpenModal] = useState(false);
+  const [action, setAction] = useState<ActionType>(null);
+  const [selected, setSelected] = useState<Item | null>(null);
 
-  // carrinho
-  const { add } = useCart();
-
-  // carrega usuário "logado" (modelo atual)
   useEffect(() => {
     const raw = localStorage.getItem("user");
     if (raw) setMe(JSON.parse(raw));
   }, []);
 
-  // carrega itens
   useEffect(() => {
     fetch("/api/items", { cache: "no-store" })
       .then((r) => r.json())
@@ -56,7 +50,6 @@ export default function BuscarItensPage() {
       .catch(() => setItems([]));
   }, []);
 
-  // favoritos
   useEffect(() => {
     const raw = localStorage.getItem("favorites");
     if (raw) setFavorites(JSON.parse(raw));
@@ -68,11 +61,9 @@ export default function BuscarItensPage() {
   const toggleFav = (id: number) =>
     setFavorites((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
 
-  // filtra: exclui itens do próprio usuário
   const filtered = useMemo(() => {
     const mineId = me?.id;
     let out = items.filter((it) => (mineId ? it.userId !== mineId : true));
-
     if (onlyActive) out = out.filter((it) => it.isActive && it.status !== "trocado" && it.status !== "indisponível");
     if (cat !== "Todos") out = out.filter((it) => it.category === cat);
     if (q.trim()) {
@@ -84,25 +75,44 @@ export default function BuscarItensPage() {
           it.category.toLowerCase().includes(term)
       );
     }
-
     out = [...out].sort((a, b) => {
       if (sort === "precoAsc") return (a.price ?? Infinity) - (b.price ?? Infinity);
       if (sort === "precoDesc") return (b.price ?? -Infinity) - (a.price ?? -Infinity);
       if (sort === "titulo") return a.title.localeCompare(b.title, "pt-BR");
       return 0;
     });
-
     return out;
   }, [items, me, onlyActive, cat, q, sort]);
 
   const formatPrice = (v: number | null) =>
     v == null ? "—" : v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
-  // ===== Handlers de ação: abrem o modal =====
-  const openAction = (a: Action, item: Item) => {
-    setCurrentItem(item);
-    setAction(a);
-    setModalOpen(true);
+  // abrir modal para uma ação
+  const openAction = (type: ActionType, item: Item) => {
+    setAction(type);
+    setSelected(item);
+    setOpenModal(true);
+  };
+
+  // confirmar ação dentro do modal
+  const confirmAction = () => {
+    if (!selected || !action) return;
+
+    if (action === "comprar") {
+      addToCart(
+        {
+          id: selected.id,
+          title: selected.title,
+          price: selected.price,
+          imageUrl: selected.imageUrl,
+        },
+        1
+      );
+    }
+
+    // trocar / mensagem podem virar rotas próprias depois
+    // por enquanto só fechamos o modal
+    setOpenModal(false);
   };
 
   return (
@@ -126,7 +136,9 @@ export default function BuscarItensPage() {
           onChange={(e) => setCat(e.target.value as CategoryFilter)}
         >
           {CATEGORIES.map((c) => (
-            <option key={c} value={c}>{c}</option>
+            <option key={c} value={c}>
+              {c}
+            </option>
           ))}
         </select>
 
@@ -143,7 +155,11 @@ export default function BuscarItensPage() {
         </select>
 
         <label className={styles.onlyActive}>
-          <input type="checkbox" checked={onlyActive} onChange={(e) => setOnlyActive(e.target.checked)} />
+          <input
+            type="checkbox"
+            checked={onlyActive}
+            onChange={(e) => setOnlyActive(e.target.checked)}
+          />
           Somente ativos
         </label>
       </div>
@@ -172,15 +188,20 @@ export default function BuscarItensPage() {
             <div className={styles.body}>
               <div className={styles.rowTop}>
                 <h3 className={styles.cardTitle}>{it.title}</h3>
-                <span className={`${styles.badge} ${
-                  it.isActive && it.status !== "trocado" && it.status !== "indisponível"
-                    ? styles.badgeOk : styles.badgeWarn
-                }`}>
+                <span
+                  className={`${styles.badge} ${
+                    it.isActive && it.status !== "trocado" && it.status !== "indisponível"
+                      ? styles.badgeOk
+                      : styles.badgeWarn
+                  }`}
+                >
                   {it.isActive ? "Disponível" : "Indisponível"}
                 </span>
               </div>
 
-              <p className={styles.desc} title={it.description}>{it.description}</p>
+              <p className={styles.desc} title={it.description}>
+                {it.description}
+              </p>
 
               <div className={styles.rowMeta}>
                 <span className={styles.chip}>{it.category}</span>
@@ -189,13 +210,25 @@ export default function BuscarItensPage() {
             </div>
 
             <div className={styles.actions}>
-              <button className={styles.btnPrimary} onClick={() => openAction("buy", it)} aria-label={`Comprar ${it.title}`}>
+              <button
+                className={styles.btnPrimary}
+                onClick={() => openAction("comprar", it)}
+                aria-label={`Comprar ${it.title}`}
+              >
                 Comprar
               </button>
-              <button className={styles.btnGhost} onClick={() => openAction("trade", it)} aria-label={`Trocar ${it.title}`}>
+              <button
+                className={styles.btnGhost}
+                onClick={() => openAction("trocar", it)}
+                aria-label={`Trocar ${it.title}`}
+              >
                 Trocar
               </button>
-              <button className={styles.btnGhost} onClick={() => openAction("message", it)} aria-label={`Enviar mensagem sobre ${it.title}`}>
+              <button
+                className={styles.btnGhost}
+                onClick={() => openAction("mensagem", it)}
+                aria-label={`Enviar mensagem sobre ${it.title}`}
+              >
                 Enviar mensagem
               </button>
             </div>
@@ -203,69 +236,59 @@ export default function BuscarItensPage() {
         ))}
       </section>
 
-      {filtered.length === 0 && <p className={styles.empty}>Nenhum item encontrado com os filtros atuais.</p>}
+      {filtered.length === 0 && (
+        <p className={styles.empty}>Nenhum item encontrado com os filtros atuais.</p>
+      )}
 
-      {/* ===== Modal ===== */}
+      {/* Modal de ação */}
       <Modal
-        open={modalOpen}
+        open={openModal}
+        onClose={() => setOpenModal(false)}
         title={
-          action === "buy" ? "Comprar item" :
-          action === "trade" ? "Propor troca" : "Enviar mensagem"
+          action === "comprar"
+            ? "Confirmar compra"
+            : action === "trocar"
+            ? "Propor troca"
+            : action === "mensagem"
+            ? "Enviar mensagem"
+            : ""
         }
-        onClose={() => setModalOpen(false)}
       >
-        {action === "buy" && (
-          <form>
-            <p>
-              Confirmar compra de <strong>{currentItem?.title}</strong>
-              {currentItem?.price != null && <> por <strong>{formatPrice(currentItem.price)}</strong></>}?
-            </p>
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap: 12, marginTop: 12 }}>
-              <button
-                data-autofocus
-                className="btn-primary"
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (currentItem) {
-                    add({
-                      id: currentItem.id,
-                      title: currentItem.title,
-                      price: currentItem.price ?? 0,
-                      imageUrl: currentItem.imageUrl ?? null
-                    });
-                  }
-                  setModalOpen(false);
-                }}
-              >
-                Adicionar ao carrinho
-              </button>
-              <button className="btn-secondary" type="button" onClick={() => setModalOpen(false)}>
+        {selected && (
+          <div style={{ display: "grid", gap: 12 }}>
+            <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+              <img
+                src={selected.imageUrl || "https://via.placeholder.com/100x80?text=Item"}
+                alt={selected.title}
+                width={80}
+                height={64}
+                style={{ objectFit: "cover", borderRadius: 8 }}
+              />
+              <div>
+                <strong>{selected.title}</strong>
+                <div style={{ color: "var(--reuse-text)" }}>{selected.description}</div>
+              </div>
+            </div>
+
+            {action === "comprar" && (
+              <p>Adicionar este item ao carrinho?</p>
+            )}
+            {action === "trocar" && (
+              <p>Em breve: fluxo para propor troca via mensagem/seleção de item.</p>
+            )}
+            {action === "mensagem" && (
+              <p>Em breve: abrir thread de mensagens com o vendedor.</p>
+            )}
+
+            <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
+              <button className="btn-secondary" onClick={() => setOpenModal(false)}>
                 Cancelar
               </button>
+              <button className="btn-primary" data-autofocus onClick={confirmAction}>
+                Confirmar
+              </button>
             </div>
-          </form>
-        )}
-
-        {action === "trade" && (
-          <form>
-            <label style={{ display:"block", marginBottom: 6 }}>Mensagem para a troca</label>
-            <textarea rows={5} style={{ width:"100%" }} placeholder="Descreva o item que oferece em troca" data-autofocus />
-            <div style={{ display:"flex", gap: 12, marginTop: 8 }}>
-              <button className="btn-primary">Enviar proposta</button>
-              <button className="btn-secondary" type="button" onClick={() => setModalOpen(false)}>Cancelar</button>
-            </div>
-          </form>
-        )}
-
-        {action === "message" && (
-          <form>
-            <label style={{ display:"block", marginBottom: 6 }}>Sua mensagem</label>
-            <textarea rows={5} style={{ width:"100%" }} placeholder="Escreva para o vendedor" data-autofocus />
-            <div style={{ display:"flex", gap: 12, marginTop: 8 }}>
-              <button className="btn-primary">Enviar</button>
-              <button className="btn-secondary" type="button" onClick={() => setModalOpen(false)}>Cancelar</button>
-            </div>
-          </form>
+          </div>
         )}
       </Modal>
     </div>
